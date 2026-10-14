@@ -3,6 +3,11 @@ import unittest
 from unittest.mock import patch
 import setup_app
 import build_app
+from pathlib import Path
+
+
+def root_for_test():
+    return Path(build_app.__file__).resolve().parent
 
 
 class SetupTests(unittest.TestCase):
@@ -21,7 +26,8 @@ class SetupTests(unittest.TestCase):
             self.assertEqual(build_app.main(), 0)
         args = build.call_args.args[0]
         self.assertTrue(any('assets:assets' in arg or 'assets;assets' in arg for arg in args))
-        self.assertTrue(any('SETUP.md' in arg for arg in args))
+        # The built-in guide ships in assets even before the separate Markdown guide is published.
+        self.assertTrue((root_for_test() / 'assets' / 'getting-started.md').is_file())
 
 
 if __name__ == '__main__':
