@@ -1,0 +1,7 @@
+IPTV Channel Player v.1.6 | TAVARC-Code
+
+Install Python 3.10+ with Tkinter and VLC. No pip dependencies.
+Windows: double-click Launch Windows.bat. macOS/Linux: python3 iptv.py.
+Open channels.csv in a spreadsheet and replace disabled examples with your authorised URLs.
+Keep the header, use UTF-8 CSV, unique IDs and enabled=true for active channels.
+Open your CSV in the app and choose Open VLC. See Help & usage inside the app.

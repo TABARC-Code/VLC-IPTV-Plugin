@@ -1,0 +1,5 @@
+id,name,group,country,language,stream_url,logo_url,tvg_id,enabled
+news-example,Example News,News,GB,en,https://example.org/news.m3u8,,,false
+films-example,Example Films,Films,GB,en,https://example.org/films.m3u8,,,false
+cartoons-example,Example Cartoons,Cartoons,GB,en,https://example.org/cartoons.m3u8,,,false
+uk-example,Example UK TV,UK TV,GB,en,https://example.org/uk.m3u8,,,false

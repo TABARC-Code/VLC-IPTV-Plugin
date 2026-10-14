@@ -1,0 +1,41 @@
+name: Test and publish versioned source
+on:
+  push:
+    branches: [main]
+    paths: [VERSION, '.github/workflows/release.yml']
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: source-release
+  cancel-in-progress: false
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install Tkinter for imports in setup tests
+        run: sudo apt-get update && sudo apt-get install -y python3-tk
+      - name: Run tests
+        run: python -m unittest discover -s tests -v
+      - name: Package and publish
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          version=$(tr -d '\r\n' < VERSION)
+          if [[ ! "$version" =~ ^v\.[0-9]+(\.[0-9]+){1,2}$ ]]; then
+            echo 'VERSION must look like v.1.6 or v.2.6.1' >&2
+            exit 1
+          fi
+          git archive --format=zip --prefix=iptv-channel-player/ HEAD > "$RUNNER_TEMP/iptv-channel-player-$version.zip"
+          if gh release view "$version" >/dev/null 2>&1; then
+            echo "Release $version already exists; leaving its tag and asset untouched."
+          else
+            gh release create "$version" "$RUNNER_TEMP/iptv-channel-player-$version.zip" \
+              --target "$GITHUB_SHA" --title "IPTV Channel Player $version" \
+              --notes "Version $version. Source package: install Python 3.10+ with Tkinter and VLC, extract all files, then use the supplied launcher. Use only streams you are authorised to access. Availability and playback are not guaranteed. This is an independent desktop companion that opens playback in VLC."
+          fi
